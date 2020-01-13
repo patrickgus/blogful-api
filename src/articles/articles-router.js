@@ -54,13 +54,13 @@ articlesRouter
             error: { message: `Article doesn't exist` }
           });
         }
-        res.article = article; // save the article for the next middleware
-        next(); // don't forget to call next so the next middleware happens!
+        res.article = article;
+        next();
       })
       .catch(next);
   })
   .get((req, res, next) => {
-    res.json(serializeArticle(article));
+    res.json(serializeArticle(res.article));
   })
   .delete((req, res, next) => {
     ArticlesService.deleteArticle(req.app.get("db"), req.params.article_id)
