@@ -71,7 +71,7 @@ describe("Articles Endpoints", function() {
     });
   });
 
-  describe(`POST /articles`, () => {
+  describe.only(`POST /articles`, () => {
     it(`creates an article, responding with 201 and the new article`, function() {
       this.retries(3);
       const newArticle = {
@@ -89,7 +89,9 @@ describe("Articles Endpoints", function() {
           expect(res.body.content).to.eql(newArticle.content);
           expect(res.body).to.have.property("id");
           expect(res.headers.location).to.eql(`/articles/${res.body.id}`);
-          const expected = new Date().toLocaleString("en", { timeZone: "America/Los_Angeles" });
+          const expected = new Date().toLocaleString("en", {
+            timeZone: "America/Los_Angeles"
+          });
           const actual = new Date(res.body.date_published).toLocaleString();
           expect(actual).to.eql(expected);
         })
@@ -98,6 +100,27 @@ describe("Articles Endpoints", function() {
             .get(`/articles/${postRes.body.id}`)
             .expect(postRes.body)
         );
+    });
+
+    const requiredFields = ["title", "style", "content"];
+
+    requiredFields.forEach(field => {
+      const newArticle = {
+        title: "Test new article",
+        style: "Listicle",
+        content: "Test new article content..."
+      };
+
+      it(`responds with 400 and an error message when the '${field}' is missing`, () => {
+        delete newArticle[field];
+
+        return supertest(app)
+          .post("/articles")
+          .send(newArticle)
+          .expect(400, {
+            error: { message: `Missing '${field}' in request body` }
+          });
+      });
     });
   });
 });
