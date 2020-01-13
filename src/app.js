@@ -7,7 +7,6 @@ const { NODE_ENV } = require("./config");
 const articlesRouter = require("./articles/articles-router");
 
 const app = express();
-const jsonParser = express.json();
 
 const morganOption = NODE_ENV === "production" ? "tiny" : "common";
 
