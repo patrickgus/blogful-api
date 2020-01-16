@@ -13,8 +13,8 @@ app.use(
     skip: () => NODE_ENV === "test"
   })
 );
-app.use(helmet());
 app.use(cors());
+app.use(helmet());
 
 app.use("/api/articles", articlesRouter);
 
@@ -22,10 +22,10 @@ app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
 
-app.use((error, req, res, next) => {
+app.use(function errorHandler(error, req, res, next) {
   let response;
   if (NODE_ENV === "production") {
-    response = { error: { message: "server error" } };
+    response = { error: "Server error" };
   } else {
     console.error(error);
     response = { message: error.message, error };
